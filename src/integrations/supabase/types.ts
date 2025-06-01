@@ -9,7 +9,120 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      question_options: {
+        Row: {
+          created_at: string
+          id: string
+          option_letter: string
+          option_text: string
+          question_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          option_letter: string
+          option_text: string
+          question_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          option_letter?: string
+          option_text?: string
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questionnaires: {
+        Row: {
+          created_at: string
+          description: string | null
+          framework_name: string
+          id: string
+          skill_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          framework_name: string
+          id?: string
+          skill_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          framework_name?: string
+          id?: string
+          skill_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questionnaires_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "skills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          created_at: string
+          id: string
+          question_order: number
+          question_text: string
+          questionnaire_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          question_order: number
+          question_text: string
+          questionnaire_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          question_order?: number
+          question_text?: string
+          questionnaire_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_questionnaire_id_fkey"
+            columns: ["questionnaire_id"]
+            isOneToOne: false
+            referencedRelation: "questionnaires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      skills: {
+        Row: {
+          created_at: string
+          id: string
+          skill_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          skill_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          skill_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
