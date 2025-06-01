@@ -40,8 +40,8 @@ const AccountPage: React.FC = () => {
           </Button>
           
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-professional-blue-100 rounded-lg flex items-center justify-center">
-              <Settings className="h-6 w-6 text-professional-blue-600" />
+            <div className="w-12 h-12 bg-sky-100 rounded-lg flex items-center justify-center">
+              <Settings className="h-6 w-6 text-sky-600" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-professional-grey-900">Account Settings</h1>
@@ -51,7 +51,7 @@ const AccountPage: React.FC = () => {
         </div>
 
         {/* Profile Information */}
-        <Card className="mb-6">
+        <Card className="mb-6 bg-sky-50 border-sky-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
@@ -84,7 +84,7 @@ const AccountPage: React.FC = () => {
         </Card>
 
         {/* Subscription Status */}
-        <Card className="mb-6">
+        <Card className="mb-6 bg-sky-50 border-sky-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CreditCard className="h-5 w-5" />
@@ -105,7 +105,7 @@ const AccountPage: React.FC = () => {
                     className={`${
                       user?.isPremium 
                         ? 'bg-growth-teal-100 text-growth-teal-800' 
-                        : 'bg-professional-grey-100 text-professional-grey-800'
+                        : 'bg-sky-100 text-sky-800'
                     }`}
                   >
                     {user?.isPremium ? (
@@ -128,9 +128,9 @@ const AccountPage: React.FC = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="p-4 bg-professional-blue-50 rounded-lg border border-professional-blue-200">
-                    <h4 className="font-medium text-professional-blue-900 mb-2">Free Plan</h4>
-                    <p className="text-sm text-professional-blue-700 mb-3">
+                  <div className="p-4 bg-sky-100 rounded-lg border border-sky-300">
+                    <h4 className="font-medium text-sky-900 mb-2">Free Plan</h4>
+                    <p className="text-sm text-sky-700 mb-3">
                       You have access to basic features. Upgrade to Premium for personalized learning paths and advanced features.
                     </p>
                     <Button className="btn-growth">
@@ -162,7 +162,7 @@ const AccountPage: React.FC = () => {
         </Card>
 
         {/* Learning Progress */}
-        <Card className="mb-6">
+        <Card className="mb-6 bg-sky-50 border-sky-200">
           <CardHeader>
             <CardTitle>Learning Progress</CardTitle>
             <CardDescription>
@@ -178,7 +178,7 @@ const AccountPage: React.FC = () => {
                 <div className="text-sm text-professional-grey-600">Phases Completed</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-professional-blue-600 mb-1">
+                <div className="text-2xl font-bold text-sky-600 mb-1">
                   {user?.currentPhase || 1}
                 </div>
                 <div className="text-sm text-professional-grey-600">Current Phase</div>
@@ -194,7 +194,7 @@ const AccountPage: React.FC = () => {
         </Card>
 
         {/* Account Actions */}
-        <Card>
+        <Card className="bg-sky-50 border-sky-200">
           <CardHeader>
             <CardTitle>Account Actions</CardTitle>
             <CardDescription>

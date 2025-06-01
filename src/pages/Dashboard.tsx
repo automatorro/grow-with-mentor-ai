@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Progress Overview */}
-        <Card className="mb-8">
+        <Card className="mb-8 bg-sky-50 border-sky-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-growth-teal-500" />
@@ -103,12 +103,12 @@ const Dashboard: React.FC = () => {
         </Card>
 
         {/* Subscription Status */}
-        <Card className={`mb-8 ${user?.isPremium ? 'border-growth-teal-200 bg-growth-teal-50' : 'border-professional-blue-200 bg-professional-blue-50'}`}>
+        <Card className={`mb-8 ${user?.isPremium ? 'border-growth-teal-200 bg-sky-50' : 'border-sky-200 bg-sky-50'}`}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  user?.isPremium ? 'bg-growth-teal-500' : 'bg-professional-blue-500'
+                  user?.isPremium ? 'bg-growth-teal-500' : 'bg-sky-500'
                 }`}>
                   {user?.isPremium ? (
                     <Star className="h-5 w-5 text-white" />
@@ -151,11 +151,11 @@ const Dashboard: React.FC = () => {
               <Card 
                 key={phase.id} 
                 className={`
-                  ${isCompleted ? 'phase-card completed' : ''}
-                  ${isActive ? 'phase-card active' : ''}
-                  ${isLocked ? 'phase-card locked' : ''}
+                  ${isCompleted ? 'bg-sky-50 border-sky-200' : ''}
+                  ${isActive ? 'bg-sky-100 border-sky-300 ring-2 ring-sky-500 ring-offset-2' : ''}
+                  ${isLocked ? 'bg-professional-grey-50 border-professional-grey-200 opacity-60' : ''}
                   ${!isLocked && !needsPremium ? 'cursor-pointer hover:shadow-lg' : 'cursor-not-allowed'}
-                  transition-all duration-200
+                  transition-all duration-200 rounded-xl p-6 shadow-sm hover:shadow-md
                 `}
                 onClick={() => !isLocked && !needsPremium && handlePhaseClick(phase)}
               >
@@ -164,17 +164,17 @@ const Dashboard: React.FC = () => {
                     <div className="flex items-start gap-4 flex-1">
                       <div className={`
                         w-12 h-12 rounded-lg flex items-center justify-center
-                        ${isCompleted ? 'bg-growth-teal-100' : 
-                          isActive ? 'bg-professional-blue-100' : 
+                        ${isCompleted ? 'bg-sky-200' : 
+                          isActive ? 'bg-sky-200' : 
                           'bg-professional-grey-100'}
                       `}>
                         {isCompleted ? (
-                          <CheckCircle className="h-6 w-6 text-growth-teal-600" />
+                          <CheckCircle className="h-6 w-6 text-sky-600" />
                         ) : isLocked ? (
                           <Lock className="h-6 w-6 text-professional-grey-400" />
                         ) : (
                           <Icon className={`h-6 w-6 ${
-                            isActive ? 'text-professional-blue-600' : 'text-professional-grey-600'
+                            isActive ? 'text-sky-600' : 'text-professional-grey-600'
                           }`} />
                         )}
                       </div>
@@ -187,7 +187,7 @@ const Dashboard: React.FC = () => {
                             Phase {phase.id}: {phase.title}
                           </h3>
                           {phase.isPremium && (
-                            <span className="text-xs bg-professional-blue-100 text-professional-blue-800 px-2 py-1 rounded">
+                            <span className="text-xs bg-sky-100 text-sky-800 px-2 py-1 rounded">
                               Premium
                             </span>
                           )}
@@ -199,8 +199,8 @@ const Dashboard: React.FC = () => {
                         </p>
                         
                         {needsPremium && (
-                          <div className="mt-3 p-3 bg-professional-blue-50 rounded-lg">
-                            <p className="text-sm text-professional-blue-700 mb-2">
+                          <div className="mt-3 p-3 bg-sky-50 rounded-lg">
+                            <p className="text-sm text-sky-700 mb-2">
                               Upgrade to Premium to unlock this phase
                             </p>
                             <Button size="sm" className="btn-growth">
