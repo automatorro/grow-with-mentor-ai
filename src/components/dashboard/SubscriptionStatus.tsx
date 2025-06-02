@@ -10,12 +10,12 @@ interface SubscriptionStatusProps {
 
 export const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ isPremium }) => {
   return (
-    <Card className={`mb-8 ${isPremium ? 'border-growth-teal-200 bg-sky-50' : 'border-sky-200 bg-sky-50'}`}>
+    <Card className="mb-8 bg-card border-border">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              isPremium ? 'bg-growth-teal-500' : 'bg-sky-500'
+              isPremium ? 'bg-primary' : 'bg-blue-500'
             }`}>
               {isPremium ? (
                 <Star className="h-5 w-5 text-white" />
@@ -24,10 +24,10 @@ export const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ isPremiu
               )}
             </div>
             <div>
-              <h3 className="font-semibold text-professional-grey-900">
+              <h3 className="font-semibold text-foreground">
                 {isPremium ? 'Premium Member' : 'Free Member'}
               </h3>
-              <p className="text-sm text-professional-grey-600">
+              <p className="text-sm text-muted-foreground">
                 {isPremium 
                   ? 'Enjoy unlimited access to all features' 
                   : 'Upgrade to unlock personalized learning paths'}
@@ -35,7 +35,7 @@ export const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ isPremiu
             </div>
           </div>
           {!isPremium && (
-            <Button className="btn-growth">
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
               Upgrade to Premium
             </Button>
           )}

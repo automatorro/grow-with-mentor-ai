@@ -16,19 +16,19 @@ export const ProgressOverview: React.FC<ProgressOverviewProps> = ({
   const overallProgress = (completedPhases / totalPhases) * 100;
 
   return (
-    <Card className="mb-8 bg-sky-50 border-sky-200">
+    <Card className="mb-8 bg-card border-border">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-growth-teal-500" />
+        <CardTitle className="flex items-center gap-2 text-foreground">
+          <TrendingUp className="h-5 w-5 text-primary" />
           Your Progress
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-muted-foreground">
           You've completed {completedPhases} out of {totalPhases} phases
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-sm text-foreground">
             <span>Overall Progress</span>
             <span>{Math.round(overallProgress)}%</span>
           </div>
