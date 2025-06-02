@@ -187,7 +187,7 @@ const AssessmentPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-professional-grey-50 pt-20 pb-12">
+    <div className="min-h-screen bg-background pt-20 pb-12">
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
@@ -201,17 +201,17 @@ const AssessmentPage: React.FC = () => {
           </Button>
           
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-professional-blue-100 rounded-lg flex items-center justify-center">
-              <Brain className="h-6 w-6 text-professional-blue-600" />
+            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+              <Brain className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-professional-grey-900">AI-Powered Assessment</h1>
-              <p className="text-professional-grey-600">Phase 1 of your professional development journey</p>
+              <h1 className="text-3xl font-bold text-foreground">AI-Powered Assessment</h1>
+              <p className="text-muted-foreground">Phase 1 of your professional development journey</p>
             </div>
           </div>
         </div>
 
-        <Card className="shadow-lg">
+        <Card className="shadow-lg border">
           <CardHeader>
             <CardTitle>Skill Assessment</CardTitle>
             <CardDescription>
@@ -241,12 +241,12 @@ const AssessmentPage: React.FC = () => {
               {/* Dynamic Questionnaire */}
               {selectedSkillId && questionnaire && (
                 <div className="space-y-6 animate-fade-in">
-                  <div className="p-4 bg-professional-blue-50 rounded-lg">
-                    <h3 className="font-semibold text-professional-grey-900 mb-2">
+                  <div className="p-4 bg-accent rounded-lg">
+                    <h3 className="font-semibold text-foreground mb-2">
                       {questionnaire.framework_name}
                     </h3>
                     {questionnaire.description && (
-                      <p className="text-professional-grey-700">
+                      <p className="text-muted-foreground">
                         {questionnaire.description}
                       </p>
                     )}
@@ -254,7 +254,7 @@ const AssessmentPage: React.FC = () => {
 
                   {loadingQuestions ? (
                     <div className="text-center py-8">
-                      <p className="text-professional-grey-600">Loading questions...</p>
+                      <p className="text-muted-foreground">Loading questions...</p>
                     </div>
                   ) : (
                     <div className="space-y-6">
@@ -294,7 +294,7 @@ const AssessmentPage: React.FC = () => {
                 <div className="flex justify-end">
                   <Button 
                     type="submit" 
-                    className="btn-growth px-8"
+                    className="btn-modern-primary px-8"
                     disabled={loading || loadingQuestions || Object.keys(answers).length !== questions.length}
                   >
                     {loading ? (
@@ -312,24 +312,24 @@ const AssessmentPage: React.FC = () => {
         </Card>
 
         {/* Assessment Tips */}
-        <Card className="mt-6">
+        <Card className="mt-6 border">
           <CardContent className="p-6">
-            <h3 className="font-semibold text-professional-grey-900 mb-3">Tips for a Better Assessment</h3>
-            <ul className="space-y-2 text-professional-grey-700">
+            <h3 className="font-semibold text-foreground mb-3">Tips for a Better Assessment</h3>
+            <ul className="space-y-2 text-muted-foreground">
               <li className="flex items-start gap-2">
-                <span className="w-2 h-2 bg-growth-teal-500 rounded-full mt-2 flex-shrink-0"></span>
+                <span className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></span>
                 Answer honestly based on your typical behavior
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-2 h-2 bg-growth-teal-500 rounded-full mt-2 flex-shrink-0"></span>
+                <span className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></span>
                 Choose the option that best describes you most of the time
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-2 h-2 bg-growth-teal-500 rounded-full mt-2 flex-shrink-0"></span>
+                <span className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></span>
                 There are no right or wrong answers - focus on self-reflection
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-2 h-2 bg-growth-teal-500 rounded-full mt-2 flex-shrink-0"></span>
+                <span className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></span>
                 Take your time to consider each question carefully
               </li>
             </ul>

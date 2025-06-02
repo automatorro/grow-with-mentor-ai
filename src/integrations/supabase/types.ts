@@ -12,22 +12,25 @@ export type Database = {
       question_options: {
         Row: {
           created_at: string
+          framework_mapping: string | null
           id: string
-          option_letter: string
+          option_letter: string | null
           option_text: string
           question_id: string
         }
         Insert: {
           created_at?: string
+          framework_mapping?: string | null
           id?: string
-          option_letter: string
+          option_letter?: string | null
           option_text: string
           question_id: string
         }
         Update: {
           created_at?: string
+          framework_mapping?: string | null
           id?: string
-          option_letter?: string
+          option_letter?: string | null
           option_text?: string
           question_id?: string
         }

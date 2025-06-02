@@ -17,21 +17,21 @@ const AdminPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-professional-grey-50 pt-20 pb-12">
+    <div className="min-h-screen bg-background pt-20 pb-12">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-professional-blue-100 rounded-lg flex items-center justify-center">
-              <Settings className="h-6 w-6 text-professional-blue-600" />
+            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+              <Settings className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-professional-grey-900">Admin Dashboard</h1>
-              <p className="text-professional-grey-600">Manage assessment data and questionnaires</p>
+              <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
+              <p className="text-muted-foreground">Manage assessment data and questionnaires</p>
             </div>
           </div>
         </div>
 
-        <Card className="shadow-lg">
+        <Card className="shadow-lg border">
           <CardHeader>
             <CardTitle>Assessment Data Management</CardTitle>
             <CardDescription>
