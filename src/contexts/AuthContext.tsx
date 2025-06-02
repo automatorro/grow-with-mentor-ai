@@ -6,6 +6,7 @@ export interface User {
   email: string;
   name: string;
   isPremium: boolean;
+  isAdmin: boolean;
   currentPhase: number;
   completedPhases: number[];
 }
@@ -55,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         name: email.split('@')[0],
         isPremium: false,
+        isAdmin: email === 'admin@example.com', // Make admin if specific email
         currentPhase: 1,
         completedPhases: []
       };
@@ -79,6 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         name,
         isPremium: false,
+        isAdmin: false,
         currentPhase: 1,
         completedPhases: []
       };
@@ -103,6 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: `user@${provider}.com`,
         name: `User from ${provider}`,
         isPremium: false,
+        isAdmin: false,
         currentPhase: 1,
         completedPhases: []
       };
