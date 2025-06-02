@@ -64,7 +64,7 @@ export const LearningJourney: React.FC<LearningJourneyProps> = ({ user }) => {
 
   return (
     <div className="grid gap-6">
-      <h2 className="text-2xl font-bold text-professional-grey-900">Your Learning Journey</h2>
+      <h2 className="text-2xl font-bold text-foreground">Your Learning Journey</h2>
       
       {phases.map((phase) => (
         <PhaseCard
