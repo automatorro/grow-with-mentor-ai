@@ -20,6 +20,7 @@ interface AuthContextType {
   loading: boolean;
   updateUserPhase: (phase: number) => void;
   upgradeToPremium: () => Promise<void>;
+  refreshSubscription: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -145,6 +146,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const refreshSubscription = async () => {
+    // This would typically check the subscription status from Supabase
+    // For now, we'll just trigger a re-render
+    if (user) {
+      const savedUser = localStorage.getItem('mentorAI_user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -154,7 +166,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       logout,
       loading,
       updateUserPhase,
-      upgradeToPremium
+      upgradeToPremium,
+      refreshSubscription
     }}>
       {children}
     </AuthContext.Provider>

@@ -16,6 +16,7 @@ import AssessmentPage from "./pages/AssessmentPage";
 import ResultsPage from "./pages/ResultsPage";
 import LearningPathPage from "./pages/LearningPathPage";
 import AccountPage from "./pages/AccountPage";
+import SubscriptionPage from "./pages/SubscriptionPage";
 import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
 
@@ -72,6 +73,14 @@ const App = () => (
                   element={
                     <ProtectedRoute>
                       <AccountPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/subscription" 
+                  element={
+                    <ProtectedRoute>
+                      <SubscriptionPage />
                     </ProtectedRoute>
                   } 
                 />
