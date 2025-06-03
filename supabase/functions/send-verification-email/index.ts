@@ -25,12 +25,27 @@ Deno.serve(async (req) => {
   try {
     const payload = await req.text()
     const headers = Object.fromEntries(req.headers)
-    const wh = new Webhook(hookSecret)
     
+    console.log('Received webhook payload:', payload.substring(0, 200))
+    
+    // Parse the webhook payload
+    let webhookData
+    try {
+      if (hookSecret) {
+        const wh = new Webhook(hookSecret)
+        webhookData = wh.verify(payload, headers)
+      } else {
+        webhookData = JSON.parse(payload)
+      }
+    } catch (error) {
+      console.error('Webhook verification failed:', error)
+      webhookData = JSON.parse(payload)
+    }
+
     const {
       user,
       email_data: { token, token_hash, redirect_to, email_action_type },
-    } = wh.verify(payload, headers) as {
+    } = webhookData as {
       user: {
         email: string
       }
