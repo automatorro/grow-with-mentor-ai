@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          completed_phases: number[] | null
+          created_at: string
+          current_phase: number
+          email: string
+          id: string
+          is_admin: boolean
+          is_premium: boolean
+          name: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          completed_phases?: number[] | null
+          created_at?: string
+          current_phase?: number
+          email: string
+          id: string
+          is_admin?: boolean
+          is_premium?: boolean
+          name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          completed_phases?: number[] | null
+          created_at?: string
+          current_phase?: number
+          email?: string
+          id?: string
+          is_admin?: boolean
+          is_premium?: boolean
+          name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       question_options: {
         Row: {
           created_at: string
@@ -131,6 +170,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          profile_id: string | null
           stripe_customer_id: string | null
           subscribed: boolean
           subscription_end: string | null
@@ -142,6 +182,7 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          profile_id?: string | null
           stripe_customer_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
@@ -153,6 +194,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          profile_id?: string | null
           stripe_customer_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
@@ -160,7 +202,15 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "subscribers_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

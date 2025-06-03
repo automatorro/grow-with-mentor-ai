@@ -10,16 +10,20 @@ interface SubscriptionData {
 }
 
 export const useSubscription = () => {
-  const { user } = useAuth();
+  const { session } = useAuth();
   const [subscriptionData, setSubscriptionData] = useState<SubscriptionData>({ subscribed: false });
   const [loading, setLoading] = useState(false);
 
   const checkSubscription = async () => {
-    if (!user) return;
+    if (!session?.access_token) return;
     
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('check-subscription');
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
       if (error) throw error;
       setSubscriptionData(data);
     } catch (error) {
@@ -30,10 +34,13 @@ export const useSubscription = () => {
   };
 
   const createCheckout = async (tier: string = 'Premium') => {
-    if (!user) return;
+    if (!session?.access_token) return;
 
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: { tier }
       });
       if (error) throw error;
@@ -46,10 +53,14 @@ export const useSubscription = () => {
   };
 
   const openCustomerPortal = async () => {
-    if (!user) return;
+    if (!session?.access_token) return;
 
     try {
-      const { data, error } = await supabase.functions.invoke('customer-portal');
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
       if (error) throw error;
       
       // Open customer portal in a new tab
@@ -60,10 +71,10 @@ export const useSubscription = () => {
   };
 
   useEffect(() => {
-    if (user) {
+    if (session?.access_token) {
       checkSubscription();
     }
-  }, [user]);
+  }, [session?.access_token]);
 
   return {
     ...subscriptionData,

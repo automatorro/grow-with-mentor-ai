@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
-import { Brain, Mail, Lock, User } from 'lucide-react';
+import { Brain, Mail, Lock, User, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 const SignUpPage: React.FC = () => {
@@ -15,6 +15,7 @@ const SignUpPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const { signup, socialLogin } = useAuth();
   const navigate = useNavigate();
 
@@ -23,9 +24,14 @@ const SignUpPage: React.FC = () => {
     setLoading(true);
     
     try {
-      await signup(email, password, name);
-      toast.success('Welcome to MentorAI! Your journey begins now.');
-      navigate('/dashboard');
+      const { error } = await signup(email, password, name);
+      
+      if (error) {
+        toast.error(error);
+      } else {
+        setEmailSent(true);
+        toast.success('Account created! Please check your email to verify your account.');
+      }
     } catch (error) {
       toast.error('Failed to create account. Please try again.');
     } finally {
@@ -36,15 +42,49 @@ const SignUpPage: React.FC = () => {
   const handleSocialLogin = async (provider: 'google' | 'facebook' | 'github') => {
     setLoading(true);
     try {
-      await socialLogin(provider);
-      toast.success(`Welcome to MentorAI! Your journey begins now.`);
-      navigate('/dashboard');
+      const { error } = await socialLogin(provider);
+      if (error) {
+        toast.error(`Failed to sign up with ${provider}. ${error}`);
+      }
+      // Social login will handle redirection automatically
     } catch (error) {
       toast.error(`Failed to sign up with ${provider}. Please try again.`);
     } finally {
       setLoading(false);
     }
   };
+
+  if (emailSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-professional-blue-50 to-growth-teal-50 px-4 pt-16">
+        <Card className="w-full max-w-md shadow-lg border-0">
+          <CardContent className="p-8 text-center">
+            <CheckCircle className="h-16 w-16 text-growth-teal-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-professional-grey-900 mb-2">Check Your Email</h2>
+            <p className="text-professional-grey-600 mb-6">
+              We've sent a verification link to <strong>{email}</strong>. 
+              Please click the link in your email to verify your account and complete the signup process.
+            </p>
+            <p className="text-sm text-professional-grey-500 mb-4">
+              Didn't receive the email? Check your spam folder or try signing up again.
+            </p>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setEmailSent(false);
+                setEmail('');
+                setPassword('');
+                setName('');
+              }}
+              className="w-full"
+            >
+              Back to Sign Up
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-professional-blue-50 to-growth-teal-50 px-4 pt-16">

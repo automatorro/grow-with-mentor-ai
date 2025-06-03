@@ -1,7 +1,22 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 
-export interface User {
+interface Profile {
+  id: string;
+  email: string;
+  name?: string;
+  avatar_url?: string;
+  is_premium: boolean;
+  is_admin: boolean;
+  current_phase: number;
+  completed_phases: number[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AuthUser {
   id: string;
   email: string;
   name: string;
@@ -12,13 +27,15 @@ export interface User {
 }
 
 interface AuthContextType {
-  user: User | null;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, name: string) => Promise<void>;
-  socialLogin: (provider: 'google' | 'facebook' | 'github') => Promise<void>;
-  logout: () => void;
+  user: AuthUser | null;
+  session: Session | null;
+  profile: Profile | null;
+  login: (email: string, password: string) => Promise<{ error?: string }>;
+  signup: (email: string, password: string, name: string) => Promise<{ error?: string }>;
+  socialLogin: (provider: 'google' | 'facebook' | 'github') => Promise<{ error?: string }>;
+  logout: () => Promise<void>;
   loading: boolean;
-  updateUserPhase: (phase: number) => void;
+  updateUserPhase: (phase: number) => Promise<void>;
   upgradeToPremium: () => Promise<void>;
   refreshSubscription: () => Promise<void>;
 }
@@ -34,132 +51,237 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Simulate checking for existing session
-    const savedUser = localStorage.getItem('mentorAI_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      return null;
     }
-    setLoading(false);
+  };
+
+  const transformProfileToUser = (supabaseUser: User, profile: Profile): AuthUser => {
+    return {
+      id: supabaseUser.id,
+      email: supabaseUser.email!,
+      name: profile.name || supabaseUser.email!.split('@')[0],
+      isPremium: profile.is_premium,
+      isAdmin: profile.is_admin,
+      currentPhase: profile.current_phase,
+      completedPhases: profile.completed_phases,
+    };
+  };
+
+  useEffect(() => {
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
+        setSession(session);
+        
+        if (session?.user) {
+          // Defer profile fetching to avoid blocking auth state updates
+          setTimeout(async () => {
+            const profileData = await fetchProfile(session.user.id);
+            if (profileData) {
+              setProfile(profileData);
+              setUser(transformProfileToUser(session.user, profileData));
+            }
+          }, 0);
+        } else {
+          setUser(null);
+          setProfile(null);
+        }
+        
+        setLoading(false);
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) {
+        setTimeout(async () => {
+          const profileData = await fetchProfile(session.user.id);
+          if (profileData) {
+            setProfile(profileData);
+            setUser(transformProfileToUser(session.user, profileData));
+          }
+        }, 0);
+      }
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    setLoading(true);
+  const login = async (email: string, password: string): Promise<{ error?: string }> => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const newUser: User = {
-        id: '1',
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        name: email.split('@')[0],
-        isPremium: false,
-        isAdmin: email === 'admin@example.com', // Make admin if specific email
-        currentPhase: 1,
-        completedPhases: []
-      };
-      
-      setUser(newUser);
-      localStorage.setItem('mentorAI_user', JSON.stringify(newUser));
+        password,
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return {};
     } catch (error) {
-      throw new Error('Login failed');
-    } finally {
-      setLoading(false);
+      return { error: 'An unexpected error occurred' };
     }
   };
 
-  const signup = async (email: string, password: string, name: string) => {
-    setLoading(true);
+  const signup = async (email: string, password: string, name: string): Promise<{ error?: string }> => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const redirectUrl = `${window.location.origin}/dashboard`;
       
-      const newUser: User = {
-        id: '1',
+      const { error } = await supabase.auth.signUp({
         email,
-        name,
-        isPremium: false,
-        isAdmin: false,
-        currentPhase: 1,
-        completedPhases: []
-      };
-      
-      setUser(newUser);
-      localStorage.setItem('mentorAI_user', JSON.stringify(newUser));
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            name: name,
+          },
+        },
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return {};
     } catch (error) {
-      throw new Error('Signup failed');
-    } finally {
-      setLoading(false);
+      return { error: 'An unexpected error occurred' };
     }
   };
 
-  const socialLogin = async (provider: 'google' | 'facebook' | 'github') => {
-    setLoading(true);
+  const socialLogin = async (provider: 'google' | 'facebook' | 'github'): Promise<{ error?: string }> => {
     try {
-      // Simulate social login API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const redirectUrl = `${window.location.origin}/dashboard`;
       
-      const newUser: User = {
-        id: '1',
-        email: `user@${provider}.com`,
-        name: `User from ${provider}`,
-        isPremium: false,
-        isAdmin: false,
-        currentPhase: 1,
-        completedPhases: []
-      };
-      
-      setUser(newUser);
-      localStorage.setItem('mentorAI_user', JSON.stringify(newUser));
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: redirectUrl,
+        },
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return {};
     } catch (error) {
-      throw new Error(`${provider} login failed`);
-    } finally {
-      setLoading(false);
+      return { error: 'An unexpected error occurred' };
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem('mentorAI_user');
+    setSession(null);
+    setProfile(null);
   };
 
-  const updateUserPhase = (phase: number) => {
-    if (user) {
-      const updatedUser = {
-        ...user,
-        currentPhase: phase,
-        completedPhases: [...user.completedPhases, phase - 1].filter((p, i, arr) => arr.indexOf(p) === i && p > 0)
+  const updateUserPhase = async (phase: number) => {
+    if (!user || !profile) return;
+
+    try {
+      const updatedCompletedPhases = [...user.completedPhases, phase - 1]
+        .filter((p, i, arr) => arr.indexOf(p) === i && p > 0);
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          current_phase: phase,
+          completed_phases: updatedCompletedPhases,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Error updating user phase:', error);
+        return;
+      }
+
+      // Update local state
+      const updatedProfile = {
+        ...profile,
+        current_phase: phase,
+        completed_phases: updatedCompletedPhases,
       };
-      setUser(updatedUser);
-      localStorage.setItem('mentorAI_user', JSON.stringify(updatedUser));
+      setProfile(updatedProfile);
+      
+      if (session?.user) {
+        setUser(transformProfileToUser(session.user, updatedProfile));
+      }
+    } catch (error) {
+      console.error('Error updating user phase:', error);
     }
   };
 
   const upgradeToPremium = async () => {
-    if (user) {
-      const updatedUser = { ...user, isPremium: true };
-      setUser(updatedUser);
-      localStorage.setItem('mentorAI_user', JSON.stringify(updatedUser));
+    if (!user || !profile) return;
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          is_premium: true,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Error upgrading to premium:', error);
+        return;
+      }
+
+      // Update local state
+      const updatedProfile = { ...profile, is_premium: true };
+      setProfile(updatedProfile);
+      
+      if (session?.user) {
+        setUser(transformProfileToUser(session.user, updatedProfile));
+      }
+    } catch (error) {
+      console.error('Error upgrading to premium:', error);
     }
   };
 
   const refreshSubscription = async () => {
-    // This would typically check the subscription status from Supabase
-    // For now, we'll just trigger a re-render
-    if (user) {
-      const savedUser = localStorage.getItem('mentorAI_user');
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
-      }
+    if (!session?.user) return;
+
+    const profileData = await fetchProfile(session.user.id);
+    if (profileData) {
+      setProfile(profileData);
+      setUser(transformProfileToUser(session.user, profileData));
     }
   };
 
   return (
     <AuthContext.Provider value={{
       user,
+      session,
+      profile,
       login,
       signup,
       socialLogin,

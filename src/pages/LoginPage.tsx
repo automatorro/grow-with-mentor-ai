@@ -22,11 +22,22 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     
     try {
-      await login(email, password);
-      toast.success('Welcome back!');
-      navigate('/dashboard');
+      const { error } = await login(email, password);
+      
+      if (error) {
+        if (error.includes('Email not confirmed')) {
+          toast.error('Please verify your email address before signing in. Check your inbox for a verification link.');
+        } else if (error.includes('Invalid login credentials')) {
+          toast.error('Invalid email or password. Please check your credentials and try again.');
+        } else {
+          toast.error(error);
+        }
+      } else {
+        toast.success('Welcome back!');
+        navigate('/dashboard');
+      }
     } catch (error) {
-      toast.error('Invalid credentials. Please try again.');
+      toast.error('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -35,9 +46,11 @@ const LoginPage: React.FC = () => {
   const handleSocialLogin = async (provider: 'google' | 'facebook' | 'github') => {
     setLoading(true);
     try {
-      await socialLogin(provider);
-      toast.success(`Welcome back!`);
-      navigate('/dashboard');
+      const { error } = await socialLogin(provider);
+      if (error) {
+        toast.error(`Failed to sign in with ${provider}. ${error}`);
+      }
+      // Social login will handle redirection automatically
     } catch (error) {
       toast.error(`Failed to sign in with ${provider}. Please try again.`);
     } finally {
