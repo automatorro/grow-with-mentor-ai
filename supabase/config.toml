@@ -25,3 +25,7 @@ enable_confirmations = true
 subject = "Verify your email address - MentorAI"
 content_path = "./supabase/functions/send-verification-email/index.ts"
 
+[auth.hook.send_email]
+enabled = true
+uri = "https://hnrkipkckzosankwmlgx.supabase.co/functions/v1/send-verification-email"
+secrets = ["SEND_EMAIL_HOOK_SECRET"]

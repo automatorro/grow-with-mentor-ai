@@ -27,20 +27,26 @@ Deno.serve(async (req) => {
     const headers = Object.fromEntries(req.headers)
     
     console.log('Received webhook payload:', payload.substring(0, 200))
+    console.log('Hook secret exists:', !!hookSecret)
     
     // Parse the webhook payload
     let webhookData
     try {
       if (hookSecret) {
+        console.log('Verifying webhook with secret')
         const wh = new Webhook(hookSecret)
         webhookData = wh.verify(payload, headers)
       } else {
+        console.log('No hook secret, parsing directly')
         webhookData = JSON.parse(payload)
       }
     } catch (error) {
       console.error('Webhook verification failed:', error)
+      console.log('Attempting to parse payload directly')
       webhookData = JSON.parse(payload)
     }
+
+    console.log('Webhook data:', JSON.stringify(webhookData, null, 2))
 
     const {
       user,
@@ -58,7 +64,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    console.log(`Sending verification email to ${user.email}`)
+    console.log(`Processing ${email_action_type} for ${user.email}`)
 
     const html = await renderAsync(
       React.createElement(VerificationEmail, {
@@ -71,6 +77,7 @@ Deno.serve(async (req) => {
       })
     )
 
+    console.log('Sending email via Resend...')
     const { error } = await resend.emails.send({
       from: 'MentorAI <onboarding@resend.dev>',
       to: [user.email],
